@@ -23,6 +23,9 @@ namespace NoddaClient;
  */
 final class NoddaClient
 {
+    /** Version del SDK; viaja en la cabecera User-Agent para que la API (y cualquier cortafuegos delante) identifique el cliente. */
+    public const VERSION = '1.2.1';
+
     private readonly HttpClientInterface $http;
 
     public function __construct(
@@ -296,7 +299,7 @@ final class NoddaClient
         $respuesta = $http->request(
             'POST',
             rtrim($baseUrl, '/') . '/v1/cuentas',
-            ['Content-Type' => 'application/json'],
+            ['Content-Type' => 'application/json', 'User-Agent' => self::userAgent()],
             json_encode($datos),
         );
 
@@ -322,7 +325,13 @@ final class NoddaClient
         return [
             'Authorization' => "Bearer {$this->apiKey}",
             'Content-Type' => 'application/json',
+            'User-Agent' => self::userAgent(),
             'X-Correlation-Id' => $this->ultimoCorrelationId,
         ];
+    }
+
+    private static function userAgent(): string
+    {
+        return 'nodda-client-php/' . self::VERSION . ' (php ' . PHP_VERSION . ')';
     }
 }

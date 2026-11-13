@@ -33,7 +33,7 @@ use NoddaClient\NoddaClient;
 $nodda = new NoddaClient('https://sandbox.nodda.es', getenv('NODDA_API_KEY'));
 
 $r = $nodda->crearFactura([
-    'series' => '2026', 'issueDate' => '2026-11-03', 'invoiceType' => 'F1',
+    'series' => '2026', 'number' => '0001', 'issueDate' => '2026-11-03', 'invoiceType' => 'F1',
     'description' => 'Servicios de consultoría', 'taxRegimeKey' => '01', 'operationQualification' => 'S1',
     'taxBase' => '100.00', 'taxRate' => '21', 'taxAmount' => '21.00', 'totalAmount' => '121.00',
     'recipients' => [['nif' => 'B12345674', 'name' => 'Cliente Demo SL']],
@@ -42,6 +42,8 @@ $r = $nodda->crearFactura([
 
 $estado = $nodda->consultarEstado($r['id']); // queued, sent, accepted_with_errors o permanently_failed
 ```
+
+`number` es el número de la factura dentro de su serie (sin huecos ni repeticiones). Puedes omitirlo si la serie tiene numeración automática configurada (en el portal, Empresas → series de numeración, o con `PUT /v1/emisores/{id}/series`); si no, la API responde `series_not_configured`.
 
 Si tu clave da acceso a varias empresas (NIF), indica cuál en el parámetro `nif` de cada método. Puedes asociar la factura a un centro de coste enviando `costCenterId` en los datos.
 

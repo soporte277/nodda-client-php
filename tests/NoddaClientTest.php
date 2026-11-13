@@ -242,6 +242,17 @@ final class NoddaClientTest extends TestCase
         }
     }
 
+    public function testCadaPeticionSeIdentificaConUserAgentPropio(): void
+    {
+        $fake = FakeHttpClient::queResponde(200, '{"canSendNow":true,"nextAllowedSendAt":null}');
+        $client = new NoddaClient('https://api.nodda.test', 'API_KEY', $fake);
+
+        $client->estadoSistema();
+
+        [, , $headers] = $fake->peticionesRecibidas[0];
+        $this->assertMatchesRegularExpression('#^nodda-client-php/\d+\.\d+\.\d+ #', $headers['User-Agent']);
+    }
+
     public function testLaApiKeyViajaEnElHeaderAuthorizationEnTodasLasPeticiones(): void
     {
         $fake = FakeHttpClient::queResponde(200, '{"canSendNow":true,"nextAllowedSendAt":null}');
